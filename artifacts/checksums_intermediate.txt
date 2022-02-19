@@ -1,0 +1,1 @@
+85d89e3383aef1bab6918ffba6365f7cea3678371f0bfdd84bd3a77ae0103db4  ./target/wasm32-unknown-unknown/release/cw_posts.wasm

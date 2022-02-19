@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExecuteMsg",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "post"
+      ],
+      "properties": {
+        "post": {
+          "$ref": "#/definitions/MsgWithAuth_for_PostMsg"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "deposit_funds"
+      ],
+      "properties": {
+        "deposit_funds": {
+          "type": "object",
+          "required": [
+            "amount"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "uint128",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "withdraw_funds"
+      ],
+      "properties": {
+        "withdraw_funds": {
+          "type": "object",
+          "required": [
+            "amount"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "uint128",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "definitions": {
+    "Authorization": {
+      "description": "an ADR-36 signed document along with a signature and pubkey of the signer",
+      "type": "object",
+      "required": [
+        "document",
+        "pubkey",
+        "signature"
+      ],
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "pubkey": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        }
+      }
+    },
+    "MsgWithAuth_for_PostMsg": {
+      "description": "some message along with signed authorization token",
+      "type": "object",
+      "required": [
+        "authorization",
+        "message"
+      ],
+      "properties": {
+        "authorization": {
+          "$ref": "#/definitions/Authorization"
+        },
+        "message": {
+          "$ref": "#/definitions/PostMsg"
+        }
+      }
+    },
+    "PostMsg": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
