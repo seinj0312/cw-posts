@@ -13,7 +13,8 @@ pub struct State {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Post {
-    pub poster: Addr,
+    pub user_addr: Addr,
+    pub username: String,
     pub content: String,
 }
 

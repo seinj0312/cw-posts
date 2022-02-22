@@ -79,7 +79,8 @@ echo $BALANCE_2
 # instantiate the CW721
 POSTS_INIT='{
   "owner": "'"$1"'",
-  "char_limit": 140
+  "char_limit": 140,
+  "post_fee": "10000"
 }'
 echo "$POSTS_INIT" | jq .
 $BINARY tx wasm instantiate $CONTRACT_CODE "$POSTS_INIT" --from "validator" --label "posts" $TXFLAG

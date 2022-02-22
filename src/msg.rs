@@ -1,4 +1,4 @@
-use cosmwasm_std::{Uint128, Uint64};
+use cosmwasm_std::{Addr, Uint128, Uint64};
 use cw_auth::{Authorized, MsgWithAuth};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -6,7 +6,7 @@ use crate::state::Post;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct AuthMeta {
-    pub cost_limit: Uint128,
+    pub username: String,
 }
 
 pub type AuthMsg<T> = Authorized<AuthMeta, T>;
@@ -35,6 +35,7 @@ pub enum ExecuteMsg {
 pub enum QueryMsg {
     PostCount {},
     LatestPosts { limit: Option<u8> },
+    GetBalance { addr: Addr },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -45,4 +46,10 @@ pub struct PostCountResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct LatestPostsResponse {
     pub posts: Vec<Post>,
+}
+
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct GetBalanceResponse {
+    pub balance: Uint128,
 }

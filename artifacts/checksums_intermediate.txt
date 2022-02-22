@@ -1,1 +1,1 @@
-85d89e3383aef1bab6918ffba6365f7cea3678371f0bfdd84bd3a77ae0103db4  ./target/wasm32-unknown-unknown/release/cw_posts.wasm
+b4910a9a0791e1e667815f9b7378ca53b014269c074fb4e51a73ae25e9b62e09  ./target/wasm32-unknown-unknown/release/cw_posts.wasm

@@ -3,7 +3,7 @@ use cosmwasm_std::entry_point;
 use cosmwasm_std::{to_binary, Addr, Binary, Decimal, Deps, DepsMut, Env, MessageInfo, Order, Response, StdResult, BankMsg, coins, StdError, Uint128, Uint64};
 use cw2::set_contract_version;
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, PostCountResponse, AuthMsg, PostMsg, LatestPostsResponse};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, PostCountResponse, AuthMsg, PostMsg, LatestPostsResponse, GetBalanceResponse};
 use cw_utils::must_pay;
 use cw_auth::authorize;
 use crate::state::{Post, State, STATE, FUNDS, POSTS_COUNT, POSTS};
@@ -57,7 +57,7 @@ pub fn post(
     mut deps: DepsMut,
     msg: AuthMsg<PostMsg>
 ) -> Result<Response, ContractError> {
-    let poster = msg.auth_token.user;
+    let user_addr = msg.auth_token.user;
     let content = msg.message.content;
     let content_length = content.len() as u8;
 
@@ -67,15 +67,16 @@ pub fn post(
         return Err(ContractError::PostTooLong { length: content_length, max: state.char_limit });
     }
 
-    move_funds(&mut deps, &poster, &state.owner, state.post_fee * Decimal::percent(90))?;
-    move_funds(&mut deps, &poster, &msg.auth_token.agent, state.post_fee * Decimal::percent(10))?;
+    move_funds(&mut deps, &user_addr, &state.owner, state.post_fee * Decimal::percent(90))?;
+    move_funds(&mut deps, &user_addr, &msg.auth_token.agent, state.post_fee * Decimal::percent(10))?;
 
     let id = POSTS_COUNT.update(deps.storage, |count| -> Result<_, ContractError> {
         Ok(count + 1)
     })?;
 
     POSTS.save(deps.storage, id, &Post {
-        poster,
+        user_addr,
+        username: msg.auth_token.meta.username,
         content,
     })?;
 
@@ -157,6 +158,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::PostCount {} => to_binary(&post_count(deps)?),
         QueryMsg::LatestPosts { limit } => to_binary(&latest_posts(deps, limit)?),
+        QueryMsg::GetBalance { addr } => to_binary(&get_balance(deps, addr)?),
     }
 }
 
@@ -172,6 +174,11 @@ fn latest_posts(deps: Deps, limit: Option<u8>) -> StdResult<LatestPostsResponse>
             .map(|item| item.map(|(_, post)| post))
             .collect();
     Ok(LatestPostsResponse { posts: posts? })
+}
+
+fn get_balance(deps: Deps, addr: Addr) -> StdResult<GetBalanceResponse> {
+    let balance = Uint128::from(FUNDS.load(deps.storage, &addr).unwrap_or(0));
+    Ok(GetBalanceResponse { balance })
 }
 
 #[cfg(test)]
