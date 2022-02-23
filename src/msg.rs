@@ -13,7 +13,8 @@ pub type AuthMsg<T> = Authorized<AuthMeta, T>;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
-    pub char_limit: u8,
+    pub name_chars: u8,
+    pub post_chars: u8,
     pub post_fee: Uint128,
 }
 

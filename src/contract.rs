@@ -24,7 +24,8 @@ pub fn instantiate(
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     let state = State {
-        char_limit: msg.char_limit,
+        name_chars: msg.name_chars,
+        post_chars: msg.post_chars,
         post_fee: msg.post_fee,
         owner: info.sender.clone(),
     };
@@ -35,8 +36,7 @@ pub fn instantiate(
 
     Ok(Response::new()
         .add_attribute("method", "instantiate")
-        .add_attribute("owner", info.sender)
-        .add_attribute("char_limit", msg.char_limit.to_string()))
+        .add_attribute("owner", info.sender))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -58,13 +58,17 @@ pub fn post(
     msg: AuthMsg<PostMsg>
 ) -> Result<Response, ContractError> {
     let user_addr = msg.auth_token.user;
+    let username = msg.auth_token.meta.username;
+    let name_length = username.len() as u8;
     let content = msg.message.content;
     let content_length = content.len() as u8;
 
     let state = STATE.load(deps.storage)?;
 
-    if content_length > state.char_limit {
-        return Err(ContractError::PostTooLong { length: content_length, max: state.char_limit });
+    if content_length > state.post_chars {
+        return Err(ContractError::ExceededCharLimit { field: "content".to_string(), length: content_length, max: state.post_chars });
+    } else if name_length > state.name_chars {
+        return Err(ContractError::ExceededCharLimit { field: "username".to_string(), length: name_length, max: state.name_chars });
     }
 
     move_funds(&mut deps, &user_addr, &state.owner, state.post_fee * Decimal::percent(90))?;
@@ -76,7 +80,7 @@ pub fn post(
 
     POSTS.save(deps.storage, id, &Post {
         user_addr,
-        username: msg.auth_token.meta.username,
+        username,
         content,
     })?;
 

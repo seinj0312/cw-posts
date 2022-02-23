@@ -20,6 +20,6 @@ pub enum ContractError {
     #[error("Insufficent funds (got {got:?}, needed {needed:?})")]
     InsufficientFunds { got: u128, needed: u128 },
 
-    #[error("Post too long (length {length:?}, max {max:?})")]
-    PostTooLong { length: u8, max: u8 },
+    #[error("Exceeded char limit (field {field:?}, length {length:?}, max {max:?})")]
+    ExceededCharLimit { field: String, length: u8, max: u8 },
 }

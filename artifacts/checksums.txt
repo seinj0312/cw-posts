@@ -1,1 +1,1 @@
-094f7e222b607ff20ec35b7d20f6f0ad30d0f74a95f1806f9dd60671dae96736  cw_posts.wasm
+410abc7e07ba78fe42d1d544b0035339bcbe2afb5f89b958fe2e016a466abbcb  cw_posts.wasm

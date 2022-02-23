@@ -7,7 +7,8 @@ use cw_storage_plus::{Item, Map};
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct State {
     pub owner: Addr,
-    pub char_limit: u8,
+    pub name_chars: u8,
+    pub post_chars: u8,
     pub post_fee: Uint128,
 }
 
