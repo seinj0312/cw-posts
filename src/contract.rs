@@ -26,6 +26,7 @@ pub fn instantiate(
     let state = State {
         name_chars: msg.name_chars,
         post_chars: msg.post_chars,
+        agent_cut: msg.agent_cut,
         post_fee: msg.post_fee,
         owner: info.sender.clone(),
     };
@@ -71,8 +72,9 @@ pub fn post(
         return Err(ContractError::ExceededCharLimit { field: "username".to_string(), length: name_length, max: state.name_chars });
     }
 
-    move_funds(&mut deps, &user_addr, &state.owner, state.post_fee * Decimal::percent(90))?;
-    move_funds(&mut deps, &user_addr, &msg.auth_token.agent, state.post_fee * Decimal::percent(10))?;
+    let agent_cut: u64 = state.agent_cut.into();
+    move_funds(&mut deps, &user_addr, &state.owner, state.post_fee * Decimal::percent(100 - agent_cut))?;
+    move_funds(&mut deps, &user_addr, &msg.auth_token.agent, state.post_fee * Decimal::percent(agent_cut))?;
 
     let id = POSTS_COUNT.update(deps.storage, |count| -> Result<_, ContractError> {
         Ok(count + 1)
@@ -173,7 +175,8 @@ fn post_count(deps: Deps) -> StdResult<PostCountResponse> {
 
 fn latest_posts(deps: Deps, limit: Option<u8>) -> StdResult<LatestPostsResponse> {
     let limit = limit.unwrap_or(DEFAULT_POST_LIMIT);
-    let posts: StdResult<Vec<Post>> = POSTS.range(deps.storage, None, None, Order::Ascending)
+
+    let posts: StdResult<Vec<Post>> = POSTS.range(deps.storage, None, None, Order::Descending)
             .take(limit as usize)
             .map(|item| item.map(|(_, post)| post))
             .collect();
@@ -195,7 +198,7 @@ mod tests {
     fn proper_initialization() {
         let mut deps = mock_dependencies_with_balance(&coins(2, "token"));
 
-        let msg = InstantiateMsg { char_limit: 17, post_fee: Uint128::from(10000u128) };
+        let msg = InstantiateMsg { name_chars: 20, post_chars: 140, post_fee: Uint128::from(10000u128), agent_cut: 90 };
         let info = mock_info("creator", &coins(1000, "earth"));
 
         // we can just call .unwrap() to assert this was a success

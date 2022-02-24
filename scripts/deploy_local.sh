@@ -81,7 +81,8 @@ POSTS_INIT='{
   "owner": "'"$1"'",
   "name_chars": 20,
   "post_chars": 140,
-  "post_fee": "10000"
+  "agent_cut": 90,
+  "post_fee": "50000"
 }'
 echo "$POSTS_INIT" | jq .
 $BINARY tx wasm instantiate $CONTRACT_CODE "$POSTS_INIT" --from "validator" --label "posts" $TXFLAG

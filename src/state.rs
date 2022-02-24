@@ -9,6 +9,7 @@ pub struct State {
     pub owner: Addr,
     pub name_chars: u8,
     pub post_chars: u8,
+    pub agent_cut: u8,
     pub post_fee: Uint128,
 }
 
