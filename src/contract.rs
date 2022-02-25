@@ -199,7 +199,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::PostCount {} => to_binary(&post_count(deps)?),
         QueryMsg::LatestPosts { limit } => to_binary(&latest_posts(deps, limit)?),
-        QueryMsg::GetBalance { addr } => to_binary(&get_balance(deps, addr)?),
+        QueryMsg::GetBalance { addr } => to_binary(&get_balance(deps, addr)),
     }
 }
 
@@ -219,9 +219,9 @@ fn latest_posts(deps: Deps, limit: Option<u8>) -> StdResult<LatestPostsResponse>
     Ok(LatestPostsResponse { posts: posts? })
 }
 
-fn get_balance(deps: Deps, addr: Addr) -> StdResult<GetBalanceResponse> {
+fn get_balance(deps: Deps, addr: Addr) -> GetBalanceResponse {
     let balance = Uint128::from(FUNDS.load(deps.storage, &addr).unwrap_or(0));
-    Ok(GetBalanceResponse { balance })
+    GetBalanceResponse { balance }
 }
 
 #[cfg(test)]
