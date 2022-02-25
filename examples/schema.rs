@@ -3,7 +3,7 @@ use std::fs::create_dir_all;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 
-use cw_posts::msg::{PostCountResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
+use cw_posts::msg::{ExecuteMsg, InstantiateMsg, PostCountResponse, QueryMsg};
 use cw_posts::state::State;
 
 fn main() {

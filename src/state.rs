@@ -11,6 +11,7 @@ pub struct State {
     pub post_chars: u8,
     pub agent_cut: u8,
     pub post_fee: Uint128,
+    pub denom: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

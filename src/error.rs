@@ -1,6 +1,6 @@
 use cosmwasm_std::StdError;
-use cw_utils::PaymentError;
 use cw_auth::AuthError;
+use cw_utils::PaymentError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
